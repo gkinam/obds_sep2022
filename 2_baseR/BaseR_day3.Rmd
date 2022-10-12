@@ -1,0 +1,273 @@
+---
+title: "R_day3_Exercise"
+author: "Kinam"
+date: '2022-10-12'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Exercise 1
+
+1. Use readRDS() to load to an object called
+/t1-data/project/obds/shared/resources/2_r/my_day2matrix.rds
+```{r}
+matrix <- readRDS("/t1-data/project/obds/shared/resources/2_r/my_day2matrix.rds")
+str(matrix)
+dim(matrix)
+```
+
+2. Add row sums and means to this dataset
+```{r}
+matrix_col <- cbind(matrix, rowsum = rowSums(matrix), rowmean = rowMeans(matrix))
+head(matrix_col)
+```
+3. Add col sums and means to this dataset
+```{r}
+matrix_row <- rbind(matrix_col, colsum = c(colSums(matrix), NA, NA), colmean = c(colMeans(matrix), NA, NA))
+tail(matrix_row)
+```
+
+
+4. Load the ToothGrowth datset using data(ToothGrowth)
+```{r}
+data(ToothGrowth)
+class(ToothGrowth)
+dim(ToothGrowth)
+```
+
+5. How do find more information on this dataset?
+```{r}
+str(ToothGrowth)
+```
+
+6. What columns of data do we have?
+```{r}
+colnames(ToothGrowth)
+```
+
+7. What is the mean tooth length?
+```{r}
+mean(ToothGrowth$len)
+```
+
+8. What is the maximum and minimum of the tooth length?
+```{r}
+max(ToothGrowth$len)
+min(ToothGrowth$len)
+```
+
+9. Can you calculate rowSums and rowMeans on this data? 
+Ans. No, because supp column is a character (code below does throws an error)
+```{r}
+# rowSums(ToothGrowth)
+# rowMeans(ToothGrowth)
+```
+## Exercise 2 - Sorting
+
+1. Load the AirQuality dataset.
+```{r}
+data(airquality)
+dim(airquality)
+str(airquality)
+```
+2. Look up more information about this dataset.
+```{r}
+help(airquality)
+```
+
+3. Examine the dataset – how many rows and columns are there?
+```{r}
+dim(airquality)
+```
+
+4. Display the column headers.
+```{r}
+colnames(airquality)
+```
+
+5. Sort the dataframe by the first column (Ozone) in ascending order.
+```{r}
+airquality_sort <- airquality[order(airquality$Ozone), ]
+head(airquality_sort)
+```
+6. Sort the dataframe by the Month and then the Temp column in descending order and save to a new variable.
+```{r}
+airquality_sort_new <- airquality[order(airquality$Month, airquality$Temp, decreasing = TRUE), ]
+tail(airquality_sort_new)
+```
+
+7. Save this sorted data to a file on the server.
+```{r}
+write.table(airquality_sort_new, file = "airquality_sort.csv", sep = ",", quote = FALSE, row.names = F)
+```
+
+## Exercise 3 - Merging
+
+1. Create the dataframes called buildings and data to merge:
+buildings <- data.frame(location=c(1, 2, 3), name=c("b1", "b2", "b3"))
+data <- data.frame(survey=c(1,1,1,2,2,2), location=c(1,2,3,2,3,1),
+efficiency=c(51,64,70,71,80,58))
+```{r}
+buildings <- data.frame(location=c(1, 2, 3), name=c("b1", "b2", "b3"))
+data <- data.frame(survey=c(1,1,1,2,2,2), location=c(1,2,3,2,3,1), efficiency=c(51,64,70,71,80,58))
+head(buildings)
+head(data)
+```
+2. What is the common key variable in these dataframes? 
+Ans. Location
+```{r}
+colnames(data)
+colnames(buildings)
+```
+
+3. Use the merge() function to merge the two dataframes by the common key variable into a new dataframe called buildingStats.
+```{r}
+buildingStats <- merge(buildings, data, by = "location", all = TRUE)
+head(buildingStats)
+```
+
+## Exercise 4 - Aggregate
+
+1. Aggregate (or group) the airquality data by Month and return means on each of the numeric variables. Also, remove “NA” values.
+```{r}
+airquality_month <- aggregate(airquality, by = list(Months = airquality$Month), FUN = mean, na.rm = T)
+head(airquality_month)
+```
+
+2. Aggregate the Solar.R column by Month, returning means of Solar.R The header of column 1 should be Month. Remove “not available” values.
+```{r}
+solar_agg <- aggregate(airquality$Solar.R, by = list(Months = airquality$Month), FUN = mean, na.rm = T)
+head(solar_agg)
+```
+
+3. Apply the standard deviation function to the data aggregation you have just done.
+```{r}
+solar_agg_sd <- aggregate(x = airquality$Solar.R, by = list(Months = airquality$Month), FUN = sd, na.rm = T)
+head(solar_agg_sd)
+```
+
+*Use this command if you want it to keep the column name, otherwise it will name the column as x*
+```{r}
+aggregate(Solar.R~Month, airquality, FUN = mean, na.rm = T)
+```
+## Exercise 5 - Functions
+
+1. Write a function to calculate the hypotenuse of a triangle given the length of the 2 sides.
+Remember the hypotenuse is the square root of the sum of the squares - √(a² + b²)
+Run the function you have created with different values.
+```{r}
+cal_hypotenuse <- function(side1, side2){
+  hypo <- sqrt(side1^2 + side2^2)
+  return(hypo)
+}
+```
+
+*Function usage - Hypotenuse*
+```{r}
+cal_hypotenuse(7,8)
+```
+
+## Exercise 6 - apply
+
+1. Create a numeric vector of length 10. Write an lapply and sapply statement to square each element. Compare the two outputs.
+```{r}
+square <- function(num) {
+  sq <- num^2
+  return(sq)
+}
+```
+
+```{r}
+vector <- 1:10
+lapply(vector, square)
+sapply(vector, square)
+```
+
+2. Generate a list of length 4 containing both numeric and logical (T/F) vectors. Write an lapply or sapply statement to calculate the sum of the elements in each vector.
+```{r}
+vector1 <- 1:10
+vector2 <- c(T, F, T, F, T, T, F, T, F, F)
+vector3 <- 10:200
+vector4 <- c(T, F, F, F, T, T)
+my_list <- list(vector1, vector2, vector3, vector4)
+head(my_list)
+```
+
+```{r}
+lapply(my_list, sum)
+sapply(my_list, sum)
+```
+
+3. Write an sapply statement to repeat each element of each vector in your list three times e.g. 1, 4, 3 would become 1, 1, 1, 4, 4, 4, 3, 3, 3. Assign the output to a new list.
+```{r}
+vec1 <- c(1, 2, 3)
+vec2 <- c(4, 6)
+vec3 <- c(5, 10, 15)
+list2 <- list(vec1, vec2, vec3)
+head(list2)
+```
+```{r}
+repeat_element <- function(vec){
+  x <- rep(vec, each = 3)
+  return(x)
+}
+```
+
+```{r}
+lapply(list2, repeat_element)
+```
+
+```{r}
+new_list <- sapply(list2, repeat_element)
+new_list
+class(new_list)
+```
+
+## Exercise7 - Loops
+
+1. Write a for loop that iterates over the numbers 1 to 7 and prints the cube of each number using print().
+```{r}
+for (i in 1:7) {
+  print(i^3)
+}
+```
+
+2. Write a for loop that iterates over the column names of the inbuilt iris dataset and print each together with the number of characters in the column name in parenthesis.
+Example output: Sepal.Length (12).
+Use the functions print(), paste0() and nchar(). Look up what these functions do using the help feature.
+```{r}
+data("iris")
+dim(iris)
+str(iris)
+```
+```{r}
+for (i in colnames(iris)) {
+  print(paste0(c(colnames(iris[i])), " ", "(" , nchar(colnames(iris[i])), ")"))
+}
+```
+
+*Alternate way*
+```{r}
+for (i in colnames(iris)) {
+  print(paste0(i, " ", "(" , nchar(i), ")"))
+}
+```
+
+3. Write an ifelse loop to print the colours in colours_vector with four characters. Use nchar() colours_vector <- c("red", "orange", "purple", "yellow", "pink", "blue")
+```{r}
+colours_vector <- c("red", "orange", "purple", "yellow", "pink", "blue")
+for (i in colours_vector) {
+ifelse(nchar(i) == 4, print(i), print("color name is not 4 characters"))
+}
+```
+```{r}
+ifelse(nchar(colours_vector) == 4, colours_vector, "color name is not 4 characters")
+```
+
+```{r}
+max("dog", "rabbit", "zoo")   #max - gives alphabetical in char vector
+```
+
+
