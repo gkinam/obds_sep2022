@@ -1,0 +1,156 @@
+---
+title: "Template for R S3 object oriented programming"
+author: "Kevin Rue-Albrecht"
+date: "13/10/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# Exercises
+
+1. Character
+
+```{r}
+character_object <- "A"
+character_object
+```
+
+```{r}
+str(character_object)
+```
+*class in this case is confusing as that is also the type - actually class is character vector in this case*
+```{r}
+class(character_object)
+```
+
+```{r}
+attributes(character_object)
+```
+
+```{r}
+character_object2 <- c("A", "B", "C")
+character_object2
+```
+
+```{r}
+str(character_object2)
+```
+
+```{r}
+class(character_object2)
+```
+
+```{r}
+attributes(character_object2)
+```
+
+# Exercise
+
+2. Factors 
+*I think the class of this is also a vector (special type) - its just factor vector*
+```{r, include=TRUE}
+factor_object <- factor(c("A", "B", "C"))
+factor_object
+```
+
+```{r}
+str(factor_object)
+```
+
+```{r}
+class(factor_object)
+```
+
+```{r}
+attributes(factor_object)
+```
+
+```{r}
+attr(factor_object, "levels")
+```
+
+```{r}
+attr(factor_object, "class")
+```
+
+# Exercise
+
+3. Data-frames
+*data-frame is a special kind of list where it requires all vectors of list to be of same length - so that it can put them in a table*
+it fills by column as that is default in R; otherwise you have specify it.
+```{r}
+dataframe_object <- data.frame(
+  numbers = c(1, 2, 3),
+  strings = c("A", "B", "C")
+  )
+dataframe_object
+```
+
+```{r}
+class(dataframe_object)
+```
+
+```{r, include=TRUE}
+str(dataframe_object)
+```
+
+```{r}
+attributes(dataframe_object)
+```
+
+# Exercise
+
+4. Matrices
+*Matrix is a vector with 2D; it is very different from df*
+```{r}
+matrix_object <- matrix(
+  data = c(1, 2, 3, 4, 5, 6, 7, 8),
+  nrow = 2,
+  )
+matrix_object
+```
+*it has both classes as matrix is an array with 2D*
+```{r}
+class(matrix_object)
+```
+
+```{r}
+str(matrix_object)
+```
+
+```{r}
+attributes(matrix_object)
+```
+
+```{r}
+attr(matrix_object, "dim")
+```
+
+# Exercise
+
+5. S3 method dispatch
+*do not add '.' to your variable names as it has a special meaning in R, thats why use chr, nums and '_'*
+```{r}
+methods("print") %>% head(14)
+```
+
+```{r}
+print.factor(factor_object)
+```
+
+```{r}
+print.factor(character_object)
+```
+
+```{r}
+print.default(character_object)
+```
+
+```{r}
+class(NA)
+```
+
